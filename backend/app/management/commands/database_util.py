@@ -41,7 +41,7 @@ def get_conn():
     if create_engine is None or URL is None:
         raise RuntimeError(
             "SQLAlchemy est requis pour le seed via le chemin rapide PostgreSQL. "
-            "Installez `sqlalchemy` (cf. requirements-dev.txt) ou utilisez "
+            "Installez `sqlalchemy` (cf. requirements.txt) ou utilisez "
             "USE_SQLITE=True."
         )
 
@@ -125,7 +125,7 @@ def insert_csv_into_table(self, table_name, csv_path):
             if pd is None:
                 raise RuntimeError(
                     "pandas est requis pour le seed via le chemin rapide "
-                    "PostgreSQL. Installez `pandas` (cf. requirements-dev.txt) "
+                    "PostgreSQL. Installez `pandas` (cf. requirements.txt) "
                     "ou utilisez USE_SQLITE=True."
                 )
             df = pd.read_csv(csv_path, dtype="string")

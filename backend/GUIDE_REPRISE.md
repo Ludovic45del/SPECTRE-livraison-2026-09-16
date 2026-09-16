@@ -21,7 +21,7 @@ backend/                      ← l'API : tout le métier et la base de données
 ├── config/                   # configuration Django (settings, urls racine, wsgi)
 ├── app/                      # le code de l'application
 ├── manage.py                 # point d'entrée de toutes les commandes Django
-├── requirements*.txt         # dépendances Python
+├── requirements.txt          # dépendances Python (application + outils de test)
 ├── .env.example              # modèle de configuration (à copier en .env)
 └── pytest.ini, setup.cfg…    # configuration des outils (tests, lint)
 ```
@@ -32,20 +32,17 @@ circuler :
 | Absent | Pourquoi | Comment le retrouver |
 |--------|----------|----------------------|
 | `.env` | Contient la clé secrète et les identifiants de base | `cp .env.example .env` puis remplir |
-| `db.sqlite3` | Base de données locale (données de dev) | `python manage.py migrate` la recrée vide |
+| La base de données | Elle vit dans le serveur PostgreSQL, pas dans le dossier | `python manage.py migrate` crée le schéma dans une base vide |
 | `media/` | Fichiers déposés par les utilisateurs (avatars, photos, pièces jointes) | Recréé automatiquement au premier upload |
 | `.venv/`, `venv/` | Environnement Python local | Recréé à l'installation (étape 2) |
 
-### Mettre le code sous contrôle de version
+### Contrôle de version
 
-Les deux dossiers sont livrés **sans historique Git**. Le réflexe à avoir dès la
-première modification :
+Le code est versionné sur GitHub (dépôt privé, demander l'accès) :
+<https://github.com/Ludovic45del/SPECTRE-livraison-2026-09-16>
 
 ```bash
-cd <le dossier parent des deux dossiers>
-git init
-git add backend frontend
-git commit -m "Reprise du projet SPECTRE"
+git clone https://github.com/Ludovic45del/SPECTRE-livraison-2026-09-16.git
 ```
 
 Les fichiers `.gitignore` fournis dans chaque dossier écartent déjà ce qui ne
@@ -59,8 +56,13 @@ utilisateurs, dépendances, artefacts de build).
 ### Prérequis
 
 - **Python 3.11** (la version utilisée en développement et en intégration continue).
-- Aucune base de données à installer pour commencer : le projet tourne sur
-  **SQLite** (un simple fichier) en développement.
+- **PostgreSQL 16** : c'est la base de données de l'application. Créer une base
+  et un utilisateur avant la première installation :
+
+```bash
+sudo -u postgres psql -c "CREATE USER spectre WITH PASSWORD 'motdepasse';"
+sudo -u postgres psql -c "CREATE DATABASE spectre OWNER spectre;"
+```
 
 ### Installation
 
@@ -68,11 +70,11 @@ utilisateurs, dépendances, artefacts de build).
 cd backend
 python3.11 -m venv .venv          # crée un environnement Python isolé
 source .venv/bin/activate         # à refaire à chaque nouveau terminal
-pip install -r requirements.txt       # dépendances de l'application
-pip install -r requirements-dev.txt   # + outils de test et de qualité
+pip install -r requirements.txt   # dépendances de l'application et outils de test
 
-cp .env.example .env              # configuration locale
-python manage.py migrate          # crée la base et son schéma
+cp .env.example .env              # configuration locale : mettre USE_SQLITE=False
+                                  # et renseigner DB_NAME, DB_USER, DB_PASSWORD
+python manage.py migrate          # crée le schéma dans la base PostgreSQL
 python manage.py initdb           # charge les référentiels + les groupes de droits
 python manage.py createadmin monlogin --first-name Prénom --last-name Nom
 python manage.py runserver 8000
@@ -110,13 +112,14 @@ avec leur rôle et leur valeur par défaut. Les quatre à connaître :
 |----------|------|
 | `DJANGO_SECRET_KEY` | Clé de signature des jetons. Obligatoire dès que `DEBUG` est faux |
 | `DEBUG` | `true` **en développement uniquement**. Expose l'admin Django et des messages d'erreur détaillés |
-| `USE_SQLITE` | `True` → base fichier SQLite · `False` → PostgreSQL (renseigner alors les `DB_*`) |
+| `USE_SQLITE` | **`False`** → PostgreSQL, la base de l'application (renseigner les `DB_*`) · `True` → SQLite, seulement pour dépanner sans serveur |
+| `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` | Connexion PostgreSQL |
 | `ALLOWED_HOSTS` | Noms de domaine / IP autorisés à servir l'application |
 
-⚠️ Les booléens sont **stricts** : écrire `USE_SQLITE=Tru` fait échouer le
+⚠️ Les booléens sont **stricts** : écrire `USE_SQLITE=Fals` fait échouer le
 démarrage avec une erreur explicite, plutôt que de basculer silencieusement sur
-PostgreSQL. C'est voulu : une faute de frappe ne doit pas envoyer l'application
-sur la mauvaise base.
+un autre moteur. C'est voulu : une faute de frappe ne doit pas envoyer
+l'application sur la mauvaise base.
 
 ---
 
@@ -366,9 +369,8 @@ python manage.py migrate app 0098     # revient en arrière (si réversible)
    demande quoi mettre dans les lignes existantes.
 3. **Ne jamais modifier une migration déjà appliquée en production.** On en
    ajoute une nouvelle par-dessus.
-4. **Le code doit fonctionner sur SQLite *et* PostgreSQL** : le déploiement du
-   laboratoire utilise SQLite, le développement peut utiliser PostgreSQL. Éviter
-   tout SQL brut spécifique à un moteur.
+4. **L'application tourne sur PostgreSQL**, mais SQLite reste utilisable pour
+   dépanner en local : éviter tout SQL brut spécifique à un moteur.
 5. **Sauvegarder avant d'appliquer en production** (§10).
 
 ---
@@ -434,8 +436,9 @@ python manage.py createadmin prenom.nom --first-name Prénom --last-name Nom
 # Recharger les référentiels et les groupes de droits (sans risque, idempotent)
 python manage.py initdb
 
-# Sauvegarder la base SQLite (à faire avant toute migration en production)
-cp db.sqlite3 "sauvegarde-$(date +%F).sqlite3"
+# Sauvegarder la base PostgreSQL (à faire avant toute migration en production)
+pg_dump -U spectre -h localhost -Fc spectre > "sauvegarde-$(date +%F).dump"
+# Restaurer : pg_restore -U spectre -h localhost -d spectre --clean sauvegarde-AAAA-MM-JJ.dump
 
 # Ouvrir une console Python avec l'application chargée (lecture, dépannage)
 python manage.py shell

@@ -1,44 +1,23 @@
-# =============================================================================
-#  SPECTRE - Backend Runtime Dependencies
-# =============================================================================
-#
-#  Python 3.11 | Django 5.1 | Django REST Framework 3.15
-#
-#  Install: pip install -r requirements.txt
-#  Dev extras (testing, linting, seeding): pip install -r requirements-dev.txt
-# =============================================================================
-
-
-# -- Django & REST Framework -------------------------------------------------
-
 django==5.1.15
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.5.1
 django-cors-headers==4.6.0
-
-
-# -- Configuration -----------------------------------------------------------
-
-python-dotenv==1.2.2                    # .env file loading
-
-
-# -- Production Server -------------------------------------------------------
-
-gunicorn==22.0.0                        # WSGI HTTP server
-whitenoise==6.7.0                       # Static file serving
-
-
-# -- Database ----------------------------------------------------------------
-
-psycopg2-binary==2.9.10                 # PostgreSQL adapter
-
-
-# -- Image processing --------------------------------------------------------
-
-Pillow==10.4.0                          # ImageField support (FSEC overview photo)
-
-
-# -- PDF generation ----------------------------------------------------------
-
-weasyprint==62.3                        # HTML/CSS -> PDF (fiche de livraison)
-pydyf<0.11                              # Pinned: weasyprint 62.3 incompatible avec pydyf >= 0.11
+python-dotenv==1.2.2
+gunicorn==22.0.0
+whitenoise==6.7.0
+psycopg2-binary==2.9.10
+Pillow==10.4.0
+weasyprint==62.3
+pydyf<0.11
+black==24.4.2
+isort==5.13.2
+flake8==7.0.0
+pre-commit==3.7.1
+pytest==8.3.4
+pytest-django==4.9.0
+pytest-cov==6.0.0
+coverage==7.6.9
+factory-boy==3.3.1
+mutmut==2.5.1
+pandas==2.2.3
+sqlalchemy==2.0.36

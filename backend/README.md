@@ -1,7 +1,7 @@
 # SPECTRE — Backend (Django REST API)
 
 API REST du projet SPECTRE. Python 3.11 · Django 5.1 · Django REST Framework 3.15 ·
-authentification JWT · architecture Clean Architecture stricte.
+PostgreSQL 16 · authentification JWT · architecture Clean Architecture stricte.
 
 > **Première prise en main du projet ?** Lire d'abord
 > [`GUIDE_REPRISE.md`](GUIDE_REPRISE.md) : installation pas à pas, concepts
@@ -14,13 +14,18 @@ authentification JWT · architecture Clean Architecture stricte.
 
 ## Installation
 
+Prérequis : Python 3.11 et un serveur **PostgreSQL 16** accessible.
+
 ```bash
+# Base et utilisateur PostgreSQL (une seule fois)
+sudo -u postgres psql -c "CREATE USER spectre WITH PASSWORD 'motdepasse';"
+sudo -u postgres psql -c "CREATE DATABASE spectre OWNER spectre;"
+
 cd backend
 python3.11 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt          # runtime
-pip install -r requirements-dev.txt      # + tests, lint, seeding (pandas/sqlalchemy)
+pip install -r requirements.txt          # runtime + tests, lint, seeding
 
-cp .env.example .env                     # puis éditer (cf. section suivante)
+cp .env.example .env                     # puis éditer : USE_SQLITE=False et le bloc DB_*
 python manage.py migrate
 python manage.py initdb                  # référentiels + groupes RBAC
 python manage.py runserver 8000
@@ -38,12 +43,13 @@ essentiels :
 |----------|------|
 | `DJANGO_SECRET_KEY` | Obligatoire hors `DEBUG` (le démarrage échoue sinon) |
 | `DEBUG` | `true` en dev uniquement. Monte `/admin/`, active `SessionAuthentication`, sert les médias par Django |
-| `USE_SQLITE` | `True` → SQLite (air-gap, dev sans serveur) · `False` → PostgreSQL (`DB_*` obligatoires) |
+| `USE_SQLITE` | **`False`** → PostgreSQL, la base de l'application (`DB_*` obligatoires) · `True` → SQLite, uniquement pour dépanner sans serveur |
+| `DB_NAME` / `DB_USER` / `DB_PASSWORD` / `DB_HOST` / `DB_PORT` | Connexion PostgreSQL (défauts : `spectre` / `spectre` / vide / `localhost` / `5432`) |
 | `ALLOWED_HOSTS` | Liste séparée par des virgules |
 | `CORS_ALLOWED_ORIGINS` | Origines navigateur autorisées |
 
 Les booléens sont **stricts** : `USE_SQLITE=Tru` lève une `ValueError` au
-démarrage plutôt que de retomber silencieusement sur PostgreSQL.
+démarrage plutôt que de basculer silencieusement sur un autre moteur.
 
 Chaque requête HTTP est enveloppée dans une transaction
 (`ATOMIC_REQUESTS=True` par défaut, réglable via `DB_ATOMIC_REQUESTS`).
@@ -115,9 +121,7 @@ backend/
 │   ├── data/          # CSV des référentiels (campaign/, fsec/)
 │   ├── migrations/    # historique du schéma (jusqu'à 0099_…)
 │   └── tests/         # unit/ · integration/ · service/ · template/ (CSV de test)
-├── requirements.txt        # runtime (PostgreSQL + WeasyPrint + Pillow)
-├── requirements-dev.txt    # + pytest, black, isort, flake8, mutmut, pandas
-├── requirements-prod.txt   # runtime minimal air-gap SQLite (installation offline)
+├── requirements.txt        # toutes les dépendances Python (runtime, tests, lint, seeding)
 ├── pytest.ini · .coveragerc · setup.cfg · mypy.ini · mutmut_config.py
 ```
 
@@ -391,14 +395,14 @@ black .                                              # format
 isort --profile=black --line-length=120 .            # imports
 flake8 app --max-line-length=120 --exclude=migrations
 
-# Outils avancés — non inclus dans requirements-dev.txt, à installer à la demande
+# Outils avancés — non inclus dans requirements.txt, à installer à la demande
 pip install mypy==1.13.0 django-stubs[compatible-mypy]==5.1.1 djangorestframework-stubs==3.15.1
 mypy app                # baseline permissive (mypy.ini) + allowlist stricte
 
 pip install vulture==2.13
 vulture                 # code mort, config dans setup.cfg [vulture]
 
-mutmut run              # tests de mutation sur app/domain (mutmut est dans requirements-dev)
+mutmut run              # tests de mutation sur app/domain (mutmut est dans requirements.txt)
 ```
 
 Configuration : `setup.cfg` (isort, flake8, mutmut, vulture), `mypy.ini`,
