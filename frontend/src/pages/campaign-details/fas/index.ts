@@ -1,0 +1,1 @@
+export { CampaignFasPage } from './CampaignFasPage';

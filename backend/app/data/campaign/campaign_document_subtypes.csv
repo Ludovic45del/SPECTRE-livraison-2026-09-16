@@ -1,0 +1,24 @@
+id,label,type_id
+0,Document LIE,0
+1,Document DTRI,0
+2,Document DCRE,0
+3,Mail,0
+4,Autre document,0
+5,CAO,1
+6,Plan et STEP DTRI,1
+7,Plan PDF,1
+8,Plan 3D,1
+9,Visrad,1
+10,Echanges BE,1
+11,Ametra,1
+12,Autre Document,1
+13,Recette pré-assemblage,2
+14,Assemblage campagne,2
+15,Gamme d'assemblage,2
+16,Autre document,2
+17,CAO,3
+18,Autre document,3
+19,Réception,4
+20,Autre document,4
+21,Autre document,5
+22,Assemblage,5

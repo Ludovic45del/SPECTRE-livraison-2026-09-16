@@ -1,0 +1,16 @@
+id,label,type_id
+0,Visrad initial,0
+1,Vues,0
+2,.STP Métro,0
+3,Fiches Car,0
+4,Fiche de réception,0
+5,Gamme d’assemblage,0
+6,Visrad réalisé,1
+7,Fichier métro,1
+8,Vue,2
+9,Fiche de livraison,3
+10,Fiche de livraison signé TCI,3
+11,Fichier d’alignement,3
+12,Fichiers PALS,4
+13,FDT,4
+14,FDM,1

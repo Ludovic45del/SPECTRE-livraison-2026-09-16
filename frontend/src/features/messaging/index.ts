@@ -1,0 +1,23 @@
+// Public API de la feature messagerie interne (page « Messagerie »)
+export { ConversationList } from './ui/ConversationList';
+export type { ConversationListProps } from './ui/ConversationList';
+export { ConversationThread } from './ui/ConversationThread';
+export type { ConversationThreadProps } from './ui/ConversationThread';
+export { MessageBubble } from './ui/MessageBubble';
+export type { MessageBubbleProps } from './ui/MessageBubble';
+export { MessageComposer } from './ui/MessageComposer';
+export type { MessageComposerProps } from './ui/MessageComposer';
+export { NewConversationDialog } from './ui/NewConversationDialog';
+export type { NewConversationDialogProps } from './ui/NewConversationDialog';
+export { ManageConversationMembersDialog } from './ui/ManageConversationMembersDialog';
+export type { ManageConversationMembersDialogProps } from './ui/ManageConversationMembersDialog';
+export { RenameConversationDialog } from './ui/RenameConversationDialog';
+export type { RenameConversationDialogProps } from './ui/RenameConversationDialog';
+export { EntityRefChip } from './ui/EntityRefChip';
+export type { EntityRefChipProps } from './ui/EntityRefChip';
+export { MessageHitCard } from './ui/MessageHitCard';
+export type { MessageHitCardProps } from './ui/MessageHitCard';
+export { EditMessageDialog } from './ui/EditMessageDialog';
+export type { EditMessageDialogProps } from './ui/EditMessageDialog';
+export { MessageSearchDialog } from './ui/MessageSearchDialog';
+export type { MessageSearchDialogProps } from './ui/MessageSearchDialog';

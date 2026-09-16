@@ -1,0 +1,58 @@
+# =============================================================================
+#  SPECTRE - Backend PRODUCTION dependencies (déploiement air-gap SQLite)
+# =============================================================================
+#
+#  Python 3.11 | Django 5.1 | SQLite | Apache + gunicorn + whitenoise
+#
+#  Installation OFFLINE (aucun accès internet sur le serveur) :
+#     pip install --no-index --find-links wheels/ -r requirements-prod.txt
+#
+#  Constitution du dossier wheels/ (sur une machine connectée, MÊME plateforme
+#  Python 3.11 / RHEL 9 x86_64) : cf. deploy/airgap/build-wheels.sh
+#
+#  Ce fichier ne contient QUE le strict nécessaire au runtime SQLite. Voir en
+#  bas les dépendances volontairement EXCLUES et pourquoi.
+# =============================================================================
+
+
+# -- Django & REST Framework -------------------------------------------------
+
+django==5.1.15
+djangorestframework==3.15.2
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.6.0
+
+
+# -- Configuration -----------------------------------------------------------
+
+python-dotenv==1.2.2                     # chargement du fichier .env
+
+
+# -- Serveur de production ---------------------------------------------------
+
+gunicorn==22.0.0                         # serveur WSGI (derrière Apache)
+whitenoise==6.7.0                        # service des statiques Django (admin/DRF)
+
+
+# -- Traitement d'images (OBLIGATOIRE) ---------------------------------------
+# Requis par les champs ImageField (avatars, signatures, photos FA/FSEC).
+# Sans Pillow, `manage.py migrate` échoue au system check (fields.E210).
+# La wheel manylinux embarque ses libs (libjpeg, zlib) → aucune dépendance
+# système à installer, compatible air-gap.
+Pillow==10.4.0
+
+
+# =============================================================================
+#  EXCLU volontairement de la prod SQLite (NE PAS ajouter sans besoin réel) :
+#
+#   psycopg2-binary   → driver PostgreSQL. Jamais requis ni importé quand
+#                       USE_SQLITE=True (cf. config/settings.py).
+#   pandas, sqlalchemy → utilisés uniquement par le chemin rapide PostgreSQL de
+#                       initdb/demo. Le seed SQLite passe par stdlib `csv`
+#                       (cf. app/management/commands/database_util.py).
+#   weasyprint, pydyf  → génération PDF des fiches de livraison. OPTIONNEL :
+#                       import protégé (cf. delivery_sheet_service.py). Nécessite
+#                       les libs système cairo/pango/gdk-pixbuf, difficiles à
+#                       fournir en air-gap. À installer séparément SI la
+#                       fonctionnalité « fiche de livraison PDF » est requise.
+# =============================================================================

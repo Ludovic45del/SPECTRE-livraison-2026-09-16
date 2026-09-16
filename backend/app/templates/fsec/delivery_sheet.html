@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fiche de livraison {{ campaign_code }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 18mm 18mm 18mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 4mm;
+            border-bottom: 1px solid #000;
+            padding-bottom: 8mm;
+            margin-bottom: 6mm;
+        }
+
+        .header .logo {
+            width: 22mm;
+            height: 22mm;
+            flex-shrink: 0;
+        }
+
+        .header .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header .title-box {
+            flex: 1 1 auto;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .header .title-box .title {
+            display: inline-block;
+            font-weight: bold;
+            font-size: 10pt;
+            line-height: 1.25;
+            border: 1px solid #000;
+            padding: 2mm 4mm;
+            margin-bottom: 0;
+            max-width: 100%;
+        }
+
+        .header .ref {
+            flex-shrink: 0;
+            font-weight: bold;
+            font-size: 10pt;
+            white-space: nowrap;
+        }
+
+        .campaign-code {
+            text-align: center;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 16pt;
+            border: 1px solid #000;
+            padding: 3mm;
+            margin: 6mm auto;
+            width: 60%;
+        }
+
+        .section-title {
+            font-weight: bold;
+            font-size: 11pt;
+            margin: 6mm 0 3mm 4mm;
+        }
+
+        .section-title::before {
+            content: "● ";
+            font-size: 8pt;
+            vertical-align: middle;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10pt;
+        }
+
+        table th, table td {
+            border: 1px solid #000;
+            padding: 2mm 2mm;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        table th {
+            font-weight: bold;
+            background: #fff;
+            font-size: 9.5pt;
+        }
+
+        table.targets td.name {
+            text-align: left;
+        }
+
+        table.targets {
+            margin-bottom: 0;
+        }
+
+        .signatures {
+            margin-top: 6mm;
+        }
+
+        table.signatures-table th {
+            font-weight: bold;
+            font-size: 10pt;
+            background: #f0f0f0;
+        }
+
+        table.signatures-table td {
+            height: 14mm;
+        }
+
+        table.signatures-table img.visa {
+            display: block;
+            max-height: 16mm;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        table.signatures-table .label {
+            text-align: left;
+            font-weight: bold;
+            width: 22mm;
+            background: #f7f7f7;
+        }
+
+        .empty-cell {
+            min-height: 8mm;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            {% if logo_data_uri %}
+                <img src="{{ logo_data_uri }}" alt="CEA">
+            {% endif %}
+        </div>
+        <div class="title-box">
+            <div class="title">FICHE DE LIVRAISON DES EDIFICES CIBLES LMJ NON CLASSES</div>
+        </div>
+        <div class="ref">DLP/SISE/LIE</div>
+    </div>
+
+    <div class="campaign-code">{{ campaign_code }}</div>
+
+    <div class="section-title">IDENTIFICATION EDIFICES CIBLES : {{ targets|length }} édifice{{ targets|length|pluralize:"s,s" }} cible{{ targets|length|pluralize:"s,s" }}</div>
+
+    <table class="targets">
+        <thead>
+            <tr>
+                <th style="width: 38%;">Nom Edifice Cible</th>
+                <th style="width: 12%;">N° Interface Io</th>
+                <th style="width: 14%;">Date livraison</th>
+                <th style="width: 16%;">Validation intégrité<br>LIE + LCI</th>
+                <th style="width: 20%;">Remarques</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for target in targets %}
+                <tr>
+                    <td class="name">{{ target.name }}</td>
+                    <td>{{ target.num_interface_io|default:"" }}</td>
+                    <td>{{ target.delivery_date|default:"" }}</td>
+                    <td>{{ target.validation_integrite|default:"" }}</td>
+                    <td>{{ target.remarques|default:"" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="section-title">SIGNATAIRES EXPEDITION</div>
+
+    <table class="signatures-table">
+        <thead>
+            <tr>
+                <th class="label"></th>
+                <th>ACCEPTEUR</th>
+                <th>RECEPTION</th>
+                <th>RECEPTION</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="label">Date</td>
+                <td></td>
+                <td>{% if signatures %}{{ signatures.reception_1_date }}{% endif %}</td>
+                <td>{% if signatures %}{{ signatures.reception_2_date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <td class="label">NOM</td>
+                <td></td>
+                <td>{% if signatures %}{{ signatures.reception_1_name }}{% endif %}</td>
+                <td>{% if signatures %}{{ signatures.reception_2_name }}{% endif %}</td>
+            </tr>
+            <tr>
+                <td class="label">VISA</td>
+                <td></td>
+                <td>
+                    {% if signatures and signatures.reception_1_signature %}
+                        <img class="visa" src="{{ signatures.reception_1_signature }}" alt="Visa accepteur">
+                    {% endif %}
+                </td>
+                <td>
+                    {% if signatures and signatures.reception_2_signature %}
+                        <img class="visa" src="{{ signatures.reception_2_signature }}" alt="Visa réception">
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,1 @@
+export { ComparaisonTab } from './ComparaisonTab';

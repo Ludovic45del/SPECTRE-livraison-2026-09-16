@@ -1,0 +1,18 @@
+id,label,color
+0,Design,#c3c3c3
+1,En cours d'assemblage,#ecce18
+2,En attente de métrologie,#7a8ce0
+3,En attente de scellement,#a2d82b
+4,Photos à prendre,#aa5485
+5,Disponible,#2a5486
+6,Sur installation,#2ee454
+7,Tirée,#123456
+8,HS,#FF0000
+9,Remplissage HP,#FF0000
+10,Test étanchéité BP,#FF0000
+11,Remplissage BP,#FF0000
+12,Permeation,#FF0000
+13,Depressurisation,#FF0000
+14,Repressurisation,#FF0000
+15,Décision MOE,#64748b
+16,Vérification scellement,#7cb342

@@ -1,0 +1,1 @@
+export { CreateFaModal } from './CreateFaModal';

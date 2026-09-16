@@ -1,0 +1,3 @@
+version_uuid,fsec_uuid,campaign_id,status_id,category_id,rack_id,name,comments,is_active,delivery_date,shooting_date,preshooting_pressure,experience_srxx,localisation,depressurization_failed
+981b3cfb2fba4b30ad2dcbdd73f3334a,981b3cfb2fba4b30ad2dcbdd73f3334a,981b3cfb2fba4a30ad2dcbdd73f3334a,0,0,0,FSEC Demo 1,Commentaire FSEC demo 1,1,2025-03-01,2025-06-15,1.5,SR01,B1,0
+981b3cfb2fba4b30ad2dcbdd73f3334b,981b3cfb2fba4b30ad2dcbdd73f3334b,981b3cfb2fba4a30ad2dcbdd73f3334b,1,1,1,FSEC Demo 2,Commentaire FSEC demo 2,1,2025-04-01,2025-07-20,2.0,SR02,B2,0
