@@ -53,9 +53,3 @@ npm run dev                     # http://localhost:3000, /api proxifié vers :80
 cd backend && pytest            # Python
 cd frontend && npm run test     # Vitest
 ```
-
-## Ce qui n'est pas versionné
-
-Ne jamais ajouter au dépôt : `backend/.env` (secrets), `backend/media/`
-(fichiers déposés par les utilisateurs), `.venv/`, `node_modules/`, `dist/`.
-Vérifier `git status` avant chaque `git add`.
