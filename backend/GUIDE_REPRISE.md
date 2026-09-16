@@ -45,9 +45,9 @@ Le code est versionné sur GitHub (dépôt privé, demander l'accès) :
 git clone https://github.com/Ludovic45del/SPECTRE-livraison-2026-09-16.git
 ```
 
-Les fichiers `.gitignore` fournis dans chaque dossier écartent déjà ce qui ne
-doit jamais être versionné (secrets, base de données, fichiers déposés par les
-utilisateurs, dépendances, artefacts de build).
+⚠️ Aucun fichier `.gitignore` n'est fourni. Avant de versionner une modification,
+vérifier que `.env`, `media/`, `node_modules/`, `.venv/`, `dist/` et les fichiers
+générés ne partent pas dans le dépôt (`git status` avant chaque `git add`).
 
 ---
 

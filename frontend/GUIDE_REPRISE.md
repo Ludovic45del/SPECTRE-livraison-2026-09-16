@@ -35,21 +35,18 @@ Ce qui **n'est pas** livré, parce que ça se régénère :
 | `coverage/` | `npm run test:coverage` |
 | `vite.config.js`, `*.tsbuildinfo` | Régénérés par `tsc -b` |
 
-### Mettre le code sous contrôle de version
+### Contrôle de version
 
-Les deux dossiers sont livrés **sans historique Git**. Le réflexe à avoir dès la
-première modification :
+Le code est versionné sur GitHub (dépôt privé, demander l'accès) :
+<https://github.com/Ludovic45del/SPECTRE-livraison-2026-09-16>
 
 ```bash
-cd <le dossier parent des deux dossiers>
-git init
-git add backend frontend
-git commit -m "Reprise du projet SPECTRE"
+git clone https://github.com/Ludovic45del/SPECTRE-livraison-2026-09-16.git
 ```
 
-Les fichiers `.gitignore` fournis dans chaque dossier écartent déjà ce qui ne
-doit jamais être versionné (secrets, base de données, fichiers déposés par les
-utilisateurs, dépendances, artefacts de build).
+⚠️ Aucun fichier `.gitignore` n'est fourni. Avant de versionner une modification,
+vérifier que `.env`, `media/`, `node_modules/`, `.venv/`, `dist/` et les fichiers
+générés ne partent pas dans le dépôt (`git status` avant chaque `git add`).
 
 ---
 
